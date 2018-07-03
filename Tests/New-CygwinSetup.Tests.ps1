@@ -100,7 +100,7 @@ Describe "$module_name PS$ps_version tests" {
 
             $exec3 = $script:exec_invocations[2]
             $exec3.GetOutput | Should -Be $false
-            $exec3.Arguments | Should -Be "--login -c 'LIBSODIUM_MAKE_ARGS=-j4 pip2 install ansible pywinrm[credssp] virtualenv'"
+            $exec3.Arguments | Should -Be "--login -c 'SODIUM_INSTALL=system pip2 install ansible pywinrm[credssp] virtualenv'"
             $exec3.Executable | Should -Be "C:\root\bin\bash.exe"
 
             $exec4 = $script:exec_invocations[3]

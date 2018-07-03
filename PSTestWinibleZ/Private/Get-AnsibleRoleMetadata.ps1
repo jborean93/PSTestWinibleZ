@@ -68,8 +68,7 @@ Function Get-AnsibleRoleMetadata {
             # Until AppVeyor supports WSL or a Linux container we are forced to
             # use Cygwin
             $cygwin_meta = @{
-                path = "C:\cygwin64"
-                setup_path = "C:\cygwin64\setup-x86_64.exe"
+                path = "C:\cygwin64-PSTestWinibleZ"
             }
             if ($test_meta.ContainsKey("cygwin")) {
                 $metadata.cygwin = $test_meta.cygwin

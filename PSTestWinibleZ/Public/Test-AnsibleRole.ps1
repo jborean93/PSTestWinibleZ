@@ -11,24 +11,6 @@ Function Test-AnsibleRole {
     # get the role metadata from meta/main.yml
     $metadata = Get-AnsibleRoleMetadata -Path $Path
 
-    # ensure the environment is setup and ready for the test
-    $virtual_environments = @()
-    $bash_bin_path = $null
-    $bash_exe = $null
-    $get_bash_path = $null
-    $invoke_bash_func = $null
-
-    if ($metadata.ContainsKey("cygwin")) {
-        $virtual_environments = New-CygwinSetup `
-            -Path $metadata.cygwin.path `
-            -SetupExe $metadata.cygwin.setup_path `
-            -AnsibleVersions $metadata.ansible_versions
-        $bash_bin_path = Join-Path -Path ($metadata.cygwin.path) -ChildPath bin
-        $bash_exe = Join-Path -Path $bash_bin_path -ChildPath bash.exe
-        $invoke_bash_func = ${Function:Invoke-BashCygwin}
-        $get_bash_path = ${Function:Get-BashPathCygwin}
-    }
-
     # copy the files across to a temp location before we start modifying them
     # for the tests
     $temp_path_dir = Join-Path -Path ([System.IO.Path]::GetTempPath()) `
@@ -36,15 +18,38 @@ Function Test-AnsibleRole {
     if (-not (Test-Path -Path $temp_path_dir)) {
         New-Item -Path $temp_path_dir -ItemType Directory > $null
     }
-    Copy-Item -Path $Path -Destination $temp_path_dir -Recurse -Force
-    $temp_path = Join-Path -Path $temp_path_dir -ChildPath (Split-Path -Path $Path -Leaf)
-
-    # convert line endings from Windows (\r\n) to Unix (\n), ansible-lint will
-    # throw errors when \r\n is used
-    Get-ChildItem -Path $temp_path -Filter "*.yml" -Recurse | `
-        ForEach-Object { Convert-FileLineEndings -Path $_.FullName }
 
     try {
+        # ensure the environment is setup and ready for the test
+        $virtual_environments = @()
+        $bash_bin_path = $null
+        $bash_exe = $null
+        $get_bash_path = $null
+        $invoke_bash_func = $null
+
+        if ($metadata.ContainsKey("cygwin")) {
+            # download the latest setup.exe
+            $cygwin_setup_exe = Join-Path -Path $temp_path_dir -ChildPath "setup-x86_64.exe"
+            (New-Object -TypeName System.Net.WebClient).DownloadFile("https://www.cygwin.com/setup-x86_64.exe", $cygwin_setup_exe)
+
+            $virtual_environments = New-CygwinSetup `
+                -Path $metadata.cygwin.path `
+                -SetupExe $cygwin_setup_exe `
+                -AnsibleVersions $metadata.ansible_versions
+            $bash_bin_path = Join-Path -Path ($metadata.cygwin.path) -ChildPath bin
+            $bash_exe = Join-Path -Path $bash_bin_path -ChildPath bash.exe
+            $invoke_bash_func = ${Function:Invoke-BashCygwin}
+            $get_bash_path = ${Function:Get-BashPathCygwin}
+        }
+
+        Copy-Item -Path $Path -Destination $temp_path_dir -Recurse -Force
+        $temp_path = Join-Path -Path $temp_path_dir -ChildPath (Split-Path -Path $Path -Leaf)
+
+        # convert line endings from Windows (\r\n) to Unix (\n), ansible-lint will
+        # throw errors when \r\n is used
+        Get-ChildItem -Path $temp_path -Filter "*.yml" -Recurse | `
+            ForEach-Object { Convert-FileLineEndings -Path $_.FullName }
+
         if ($metadata.ci_platform -eq "appveyor-windows") {
             # create the inventory file for AppVeyor if one does not already exist
             $inventory_path = Join-Path -Path $temp_path -ChildPath tests | Join-Path -ChildPath $metadata.inventory
