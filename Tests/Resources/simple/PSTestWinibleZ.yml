@@ -1,0 +1,8 @@
+name: simple-role
+version: 0.0.1  # the version of the role
+ci_platform: appveyor-windows
+username: vagrant
+password: vagrant
+ansible_versions:  # list of Ansible versions to test against
+- 2.4.5.0
+- 2.5.5

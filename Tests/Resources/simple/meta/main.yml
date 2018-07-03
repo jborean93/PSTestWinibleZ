@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  author: Jordan Borean
+  description: Basic meta for Windows Ansible role
+  company: test company
+  license: MIT
+  min_ansible_version: 2.4
+  platforms:
+  - name: Windows
+    versions:
+    - Server 2016
+    - Server 2012 R2
+    - Server 2012
+    - Server 2008 R2
+    - Server 2008
+    - Windows 10
+    - Windows 8.1
+    - Windows 7
+  galaxy_tags:
+  - windows
+dependencies: []

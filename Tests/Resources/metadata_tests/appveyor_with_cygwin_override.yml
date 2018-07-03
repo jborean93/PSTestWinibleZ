@@ -1,0 +1,8 @@
+name: role
+version: 1.0.0
+ci_platform: appveyor-windows
+ansible_versions:
+- 2.5.4
+cygwin:
+  path: D:\cygwin64
+  setup_path: D:\cygwin64\setup.exe
