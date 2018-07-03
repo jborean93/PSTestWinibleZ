@@ -33,7 +33,7 @@ Describe "$module_name PS$ps_version tests" {
             @{
                 Path = "appveyor_default.yml"
                 Expected = @{
-                    cygwin = @{setup_path="c:\cygwin64\setup-x86_64.exe"; path="C:\cygwin64"}
+                    cygwin = @{path="C:\cygwin64-PSTestWinibleZ"}
                     version = "0.0.1"
                     inventory = "inventory.ini"
                     ansible_versions = @("2.4.5.0", "2.5.5")
@@ -46,7 +46,7 @@ Describe "$module_name PS$ps_version tests" {
             @{
                 Path = "appveyor_with_cygwin_override.yml"
                 Expected = @{
-                    cygwin = @{setup_path="D:\cygwin64\setup.exe"; path="D:\cygwin64"}
+                    cygwin = @{path="D:\cygwin64"}
                     version = "1.0.0"
                     inventory = "inventory.ini"
                     ansible_versions = @("2.5.4")
@@ -58,7 +58,7 @@ Describe "$module_name PS$ps_version tests" {
             @{
                 Path = "appveyor_with_inventory.yml"
                 Expected = @{
-                    cygwin = @{setup_path="c:\cygwin64\setup-x86_64.exe"; path="C:\cygwin64"}
+                    cygwin = @{path="C:\cygwin64-PSTestWinibleZ"}
                     version = "0.0.2"
                     inventory = "inventory.yml"
                     ansible_versions = @("2.4.5.0", "2.5.5")
@@ -70,7 +70,7 @@ Describe "$module_name PS$ps_version tests" {
             @{
                 Path = "appveyor_with_verbosity.yml"
                 Expected = @{
-                    cygwin = @{setup_path="c:\cygwin64\setup-x86_64.exe"; path="C:\cygwin64"}
+                    cygwin = @{path="C:\cygwin64-PSTestWinibleZ"}
                     version = "0.0.3"
                     inventory = "inventory.ini"
                     ansible_versions = @("2.4.5.0", "2.5.5")
@@ -82,7 +82,7 @@ Describe "$module_name PS$ps_version tests" {
             @{
                 Path = "no_platform.yml"
                 Expected = @{
-                    cygwin = @{setup_path="d:\cygwin64\setup.exe"; path="d:\cygwin64"}
+                    cygwin = @{path="d:\cygwin64"}
                     version = "0.0.4"
                     inventory = "tmp-inventory.ini"
                     ansible_versions = @("2.4.5.0", "2.5.5")

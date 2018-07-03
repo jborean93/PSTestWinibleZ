@@ -35,6 +35,10 @@ Describe "$module_name PS$ps_version tests" {
             $actual = [System.IO.File]::ReadAllText($tmp_path)
             $actual | Should -Be $Expected
         }
+
+        It 'Fails to convert a non-existant path' {
+            { Convert-FileLineEndings -Path "fake path" } | Should -Throw "Cannot convert line endings of file fake path as it is not accessible or does not exist"
+        }
     }
 
     AfterEach {
