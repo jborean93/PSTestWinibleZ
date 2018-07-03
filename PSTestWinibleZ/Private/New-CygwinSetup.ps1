@@ -53,7 +53,7 @@ Function New-CygwinSetup {
         if ($rc -ne 0) {
             throw "Failed to create virtualenv in Cygwin at $venv_name, rc: $rc"
         }
-        
+
         Write-Verbose -Message "Install Ansible $version into the venv $venv_name"
         $rc = Invoke-BashCygwin -Executable $bash_exe -Arguments "$venv_name/bin/pip install ansible==$version ansible-lint"
         if ($rc -ne 0) {

@@ -1,3 +1,6 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "", Justification="var is used in test and AfterEach blocks")]
+param()
+
 $ps_version = $PSVersionTable.PSVersion.Major
 $module_name = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
 Import-Module -Name $PSScriptRoot\..\PSTestWinibleZ -Force
@@ -5,7 +8,6 @@ Import-Module -Name $PSScriptRoot\..\PSTestWinibleZ -Force
 
 Describe "$module_name PS$ps_version tests" {
     BeforeEach {
-        $tmp_path = ""  # to please PSScriptAnalyzer
         $tmp_path = [System.IO.Path]::GetTempFileName()
     }
 
