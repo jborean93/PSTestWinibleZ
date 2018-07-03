@@ -44,7 +44,7 @@ Function Test-AnsibleRole {
     try {
         if ($metadata.ci_platform -eq "appveyor-windows") {
             # create the inventory file for AppVeyor if one does not already exist
-            $inventory_path = Join-Path -Path (Join-Path -Path $temp_path -ChildPath tests) -ChildPath $metadata.inventory
+            $inventory_path = Join-Path -Path $temp_path -ChildPath tests | Join-Path -ChildPath $metadata.inventory
             if (-not (Test-Path -Path $inventory_path)) {
                 $username = $env:USERNAME
                 $password = [Microsoft.Win32.Registry]::GetValue("HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon", "DefaultPassword", '')
@@ -63,11 +63,10 @@ ansible_winrm_transport=ntlm
                 Set-Content -Path $inventory_path -Value $inventory_text
             }
 
-            # TODO: uncomment this
-            # Enable-PSRemoting -Force
+            Enable-PSRemoting -Force
         }
 
-        $build_file = Join-Path -Path $ps_ansible_tester_root -ChildPath "Resources\psake.ps1"
+        $build_file = Join-Path -Path $script:PSScriptRoot -ChildPath Resources | Join-Path -ChildPath psake.ps1
         Invoke-psake -buildFile $build_file -parameters @{
             bash_bin_path = $bash_bin_path
             bash_exe = $bash_exe

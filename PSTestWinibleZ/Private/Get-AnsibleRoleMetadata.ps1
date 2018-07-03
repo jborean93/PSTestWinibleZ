@@ -84,7 +84,7 @@ Function Get-AnsibleRoleMetadata {
                 throw [ArgumentException]"No Ansible runner environment specified, please set cygwin with the keys 'path' and 'setup_path' to continue"
             }
 
-            $inventory_path = Join-Path -Path (Join-Path -Path $Path -ChildPath tests) -ChildPath $metadata.inventory
+            $inventory_path = Join-Path -Path $Path -ChildPath tests | Join-Path -ChildPath $metadata.inventory
             if (-not (Test-Path -Path $inventory_path)) {
                 throw [ArgumentException]"The inventory file at '$inventory_path' does not exist"
             }
