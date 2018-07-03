@@ -11,13 +11,13 @@ Describe "$module_name PS$ps_version tests" {
 
         # run a full integration test on a role
         It 'runs a test on a successful role' {
-            $actual = Test-AnsibleRole -Path (Join-Path -Path (Get-Location) -ChildPath Resources/simple)
+            $actual = Test-AnsibleRole -Path (Join-Path -Path ($PSScriptRoot) -ChildPath Resources | Join-Path -ChildPath simple)
             $actual.build_success | Should -be $true
         }
 
         # mock out the New-CygwinSetup to save time on the remaining tests
         It 'runs a test on an unsuccessful role' {
-            $actual = Test-AnsibleRole -Path (Join-Path -Path (Get-Location) -ChildPath Resources/fail-role)
+            $actual = Test-AnsibleRole -Path (Join-Path -Path ($PSScriptRoot) -ChildPath Resources | Join-Path -ChildPath fail-role)
             $actual.build_success | Should -Be $false
         }
     }
