@@ -5,6 +5,7 @@ Import-Module -Name $PSScriptRoot\..\PSTestWinibleZ -Force
 
 Describe "$module_name PS$ps_version tests" {
     BeforeEach {
+        $tmp_path = ""  # to please PSScriptAnalyzer
         $tmp_path = [System.IO.Path]::GetTempFileName()
     }
 

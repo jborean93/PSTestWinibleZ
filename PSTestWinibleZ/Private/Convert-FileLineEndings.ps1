@@ -1,4 +1,5 @@
 Function Convert-FileLineEndings {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "", Justification="We are changing endings not an ending")]
     param (
         [Parameter(Mandatory=$true)]$Path
     )

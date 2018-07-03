@@ -1,5 +1,5 @@
-#[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "", Justification="Global vars are used outside of where they are declared")]
-#param()
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "", Justification="Global vars are used outside of where they are declared")]
+param()
 
 # PSake makes variables declared here available in other scriptblocks
 Properties {

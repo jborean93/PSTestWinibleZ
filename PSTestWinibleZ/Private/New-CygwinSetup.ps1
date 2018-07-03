@@ -1,4 +1,5 @@
 Function New-CygwinSetup {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "")]
     param (
         [Parameter(Mandatory=$true)][String]$Path,
         [Parameter(Mandatory=$true)][String]$SetupExe,
