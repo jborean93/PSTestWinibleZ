@@ -1,6 +1,0 @@
-name: fail-role
-version: 0.0.1
-ci_platform: appveyor-windows
-ansible_versions:
-- 2.4.5.0
-- 2.5.5
