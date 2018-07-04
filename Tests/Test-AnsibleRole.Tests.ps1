@@ -11,14 +11,14 @@ Describe "$module_name PS$ps_version tests" {
 
         # run a full integration test on a role
         It 'runs a test on a successful role' {
-            $actual = Test-AnsibleRole -Path (Join-Path -Path ($PSScriptRoot) -ChildPath Resources | Join-Path -ChildPath simple)
-            $actual.build_success | Should -be $true
+            Test-AnsibleRole -Path (Join-Path -Path ($PSScriptRoot) -ChildPath Resources | Join-Path -ChildPath simple)
         }
 
         # mock out the New-CygwinSetup to save time on the remaining tests
         It 'runs a test on an unsuccessful role' {
-            $actual = Test-AnsibleRole -Path (Join-Path -Path ($PSScriptRoot) -ChildPath Resources | Join-Path -ChildPath fail-role)
-            $actual.build_success | Should -Be $false
+            $errors = @()
+            Test-AnsibleRole -Path (Join-Path -Path ($PSScriptRoot) -ChildPath Resources | Join-Path -ChildPath fail-role) -ErrorAction Continue -ErrorVariable errors
+            $errors[-1].Exception.Message | Should -Be "psake failed with error, check error logs and fix up build"
         }
     }
 }

@@ -2,6 +2,7 @@
 # MIT License (see LICENSE or https://opensource.org/licenses/MIT)
 
 Function Test-AnsibleRole {
+    [CmdletBinding()]
     param(
         [String]$Path
     )
@@ -92,5 +93,4 @@ ansible_winrm_transport=ntlm
     if (-not $psake.build_success) {
         Write-Error -Message "psake failed with error, check error logs and fix up build"
     }
-    return $psake
 }
