@@ -25,7 +25,7 @@ function Resolve-Module
                     if ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne 'Trusted') { Set-PSRepository -Name PSGallery -InstallationPolicy Trusted }
 
                     Write-Verbose -Message "$($ModuleName) Installed Version [$($Version.tostring())] is outdated. Installing Gallery Version [$($GalleryVersion.tostring())]"
-                    Install-Module -Name $ModuleName -Force
+                    Install-Module -Name $ModuleName -Force -SkipPublisherCheck
                     Import-Module -Name $ModuleName -Force -RequiredVersion $GalleryVersion
                 }
                 else
@@ -37,7 +37,7 @@ function Resolve-Module
             else
             {
                 Write-Verbose -Message "$($ModuleName) Missing, installing Module"
-                Install-Module -Name $ModuleName -Force
+                Install-Module -Name $ModuleName -Force -SkipPublisherCheck
                 Import-Module -Name $ModuleName -Force -RequiredVersion $Version
             }
         }

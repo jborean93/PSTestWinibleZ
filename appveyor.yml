@@ -3,7 +3,7 @@ environment:
   NuGetApiKey:
     secure: VMvVbhuMaUTbI8WgnJH/WF7UBGwj261AgERGm25s21zQErHoIdwacoF3yd6OjIWh
 
-os: WMF 5
+image: Visual Studio 2017
 
 # Skip on updates to the readme.
 skip_commits:

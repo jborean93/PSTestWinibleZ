@@ -26,7 +26,7 @@ This module has the following requirements
 
 It also requires the following PowerShell modules;
 
-* [Psake](https://github.com/psake/psake)
+* [psake](https://github.com/psake/psake)
 * [powershell-yaml](https://github.com/cloudbase/powershell-yaml)
 
 
