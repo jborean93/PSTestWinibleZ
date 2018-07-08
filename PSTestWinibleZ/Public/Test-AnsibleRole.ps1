@@ -72,7 +72,7 @@ ansible_winrm_transport=ntlm
                 Set-Content -Path $inventory_path -Value $inventory_text
             }
 
-            Enable-PSRemoting -Force
+            Enable-PSRemoting -Force > $null
         }
 
         $build_file = Join-Path -Path $script:PSScriptRoot -ChildPath Resources | Join-Path -ChildPath psake.ps1
@@ -93,4 +93,6 @@ ansible_winrm_transport=ntlm
     if (-not $psake.build_success) {
         Write-Error -Message "psake failed with error, check error logs and fix up build"
     }
+
+    return $psake.build_success
 }

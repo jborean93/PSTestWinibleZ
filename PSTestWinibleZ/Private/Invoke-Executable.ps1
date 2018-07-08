@@ -14,15 +14,16 @@ Function Invoke-Executable {
     $process.StartInfo.Arguments = $Arguments
     $process.StartInfo.UseShellExecute = $false
 
-    if ($GetOutput) {
-        $process.StartInfo.RedirectStandardError = $true
-        $process.StartInfo.RedirectStandardOutput = $true
+    $process.StartInfo.RedirectStandardError = $true
+    $process.StartInfo.RedirectStandardOutput = $true
 
-        Add-Type -TypeDefinition @'
+    Add-Type -TypeDefinition @'
 using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Management.Automation.Host;
+
 namespace Command
 {
     public static class ProcessUtil
@@ -48,19 +49,41 @@ namespace Command
             stdout = so;
             stderr = se;
         }
+
+        public static void WriteProcessOutput(StreamReader stdoutStream, StreamReader stderrStream, PSHostUserInterface hostUI)
+        {
+            EventWaitHandle sowait = new EventWaitHandle(false, EventResetMode.ManualReset);
+            EventWaitHandle sewait = new EventWaitHandle(false, EventResetMode.ManualReset);
+            ThreadPool.QueueUserWorkItem((s)=>
+            {
+                while (!stdoutStream.EndOfStream)
+                    hostUI.WriteLine(stdoutStream.ReadLine());
+                sowait.Set();
+            });
+            ThreadPool.QueueUserWorkItem((s) =>
+            {
+                while (!stderrStream.EndOfStream)
+                    hostUI.WriteErrorLine(stderrStream.ReadLine());
+                sewait.Set();
+            });
+            foreach(WaitHandle wh in new WaitHandle[] { sowait, sewait })
+                wh.WaitOne();
+        }
     }
 }
 '@
-    }
 
     $process.Start() > $null
-
     if ($GetOutput) {
         $stdout = $stderr = $null
         [Command.ProcessUtil]::GetProcessOutput($process.StandardOutput, $process.StandardError, [ref]$stdout, [ref]$stderr)
         $process.WaitForExit() > $null
         return $stdout, $stderr, $process.ExitCode
     } else {
+        # AppVeyor console does not have a proper ConsoleHost, we need to use
+        # the PSHostUserInterface methods to write the child process' stdout
+        # and stderr
+        [Command.ProcessUtil]::WriteProcessOutput($process.StandardOutput, $process.StandardError, $Host.UI)
         $process.WaitForExit() > $null
         return $process.ExitCode
     }
