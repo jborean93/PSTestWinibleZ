@@ -1,53 +1,60 @@
 # thanks to http://ramblingcookiemonster.github.io/Building-A-PowerShell-Module/
 
-function Resolve-Module
-{
+function Resolve-Module {
     [Cmdletbinding()]
-    param
-    (
-        [Parameter(Mandatory)]
-        [string[]]$Name
+    param(
+        [Parameter(Mandatory=$true)][String]$Name,
+        [Parameter()][Version]$Version
     )
-    Process
-    {
-        foreach ($ModuleName in $Name)
-        {
-            $Module = Get-Module -Name $ModuleName -ListAvailable
-            Write-Verbose -Message "Resolving Module $($ModuleName)"
 
-            if ($Module)
-            {
-                $Version = $Module | Measure-Object -Property Version -Maximum | Select-Object -ExpandProperty Maximum
-                $GalleryVersion = Find-Module -Name $ModuleName -Repository PSGallery | Measure-Object -Property Version -Maximum | Select-Object -ExpandProperty Maximum
+    Write-Verbose -Message "Resolving module $Name"
+    $module = Get-Module -Name $Name -ListAvailable
 
-                if ($Version -lt $GalleryVersion)
-                {
-                    if ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne 'Trusted') { Set-PSRepository -Name PSGallery -InstallationPolicy Trusted }
+    if ($module) {
+        if ($null -eq $Version) {
+            Write-Verbose -Message "Module $Name is present, checking if version is the latest available"
+            $Version = (Find-Module -Name $Name -Repository PSGallery | `
+                Measure-Object -Property Version -Maximum).Maximum
+            $installed_version = ($module | Measure-Object -Property Version -Maximum).Maximum
 
-                    Write-Verbose -Message "$($ModuleName) Installed Version [$($Version.tostring())] is outdated. Installing Gallery Version [$($GalleryVersion.tostring())]"
-                    Install-Module -Name $ModuleName -Force -SkipPublisherCheck
-                    Import-Module -Name $ModuleName -Force -RequiredVersion $GalleryVersion
-                }
-                else
-                {
-                    Write-Verbose -Message "Module Installed, Importing $($ModuleName)"
-                    Import-Module -Name $ModuleName -Force -RequiredVersion $Version
-                }
-            }
-            else
-            {
-                Write-Verbose -Message "$($ModuleName) Missing, installing Module"
-                Install-Module -Name $ModuleName -Force -SkipPublisherCheck
-                Import-Module -Name $ModuleName -Force -RequiredVersion $Version
-            }
+            $install = $installed_version -lt $Version
+        } else {
+            Write-Verbose -Message "Module $Name is present, checking if version matched $Version"
+            $version_installed = $module | Where-Object { $_.Version -eq $Version }
+            $install = $null -eq $version_installed
         }
+
+        if ($install) {
+            Write-Verbose -Message "Installing module $Name at version $Version"
+            Install-Module -Name $Name -Force -SkipPublisherCheck -RequiredVersion $Version
+        }
+        Import-Module -Name $Name -RequiredVersion $Version
+    } else {
+        Write-Verbose -Message "Module $Name is not installed, installing"
+        $splat_args = @{}
+        if ($null -ne $Version) {
+            $splat_args.RequiredVersion = $Version
+        }
+        Install-Module -Name $Name -Force -SkipPublisherCheck @splat_args
+        Import-Module -Name $Name -Force
     }
 }
 
-# Grab nuget bits, install modules, set build variables, start build.
 Get-PackageProvider -Name NuGet -ForceBootstrap | Out-Null
 
-Resolve-Module Psake, PSDeploy, Pester, BuildHelpers, PsScriptAnalyzer, powershell-yaml
+if ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne "Trusted") {
+    Write-Verbose -Message "Setting PSGallery as a trusted repository"
+    Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+}
+
+# 4.7.1 has issue when running Invoke-Psake from Pester which we do in this
+# test, so revert back to the 4.7.0 release
+Resolve-Module -Name Psake -Version 4.7.0
+Resolve-Module -Name PSDeploy
+Resolve-Module -Name Pester
+Resolve-Module -Name BuildHelpers
+Resolve-Module -Name PsScriptAnalyzer
+Resolve-Module -Name powershell-yaml
 
 Set-BuildEnvironment
 
