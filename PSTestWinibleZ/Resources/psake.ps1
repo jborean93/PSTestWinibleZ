@@ -91,12 +91,6 @@ Task Test -Depends Sanity {
             -VirtualEnvPath $venv `
             -Verbosity $role_metadata.verbosity
 
-        Write-ConsoleOutput -Message "`n`tTEST: Running '$test_playbook' on $venv again for idempotency testing"
-        Invoke-AnsiblePlaybook -Inventory $role_inventory_bash_path `
-            -Playbook "$role_test_bash_path/main.yml" `
-            -VirtualEnvPath $venv `
-            -Verbosity $role_metadata.verbosity
-
         $cleanup_playbook = Join-Path -Path $role_test_path -ChildPath cleanup.yml
         if (Test-Path -Path $cleanup_playbook) {
             Write-ConsoleOutput -Message "`n`tTEST: Running '$cleanup_playbook' on $venv after completing testing"

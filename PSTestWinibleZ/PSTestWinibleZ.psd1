@@ -3,7 +3,7 @@
 
 @{
     RootModule = 'PSTestWinibleZ.psm1'
-    ModuleVersion = '0.1.1'
+    ModuleVersion = '0.1.2'
     GUID = '7395e601-efc5-4248-8d2e-d1983fbf7204'
     Author = 'Jordan Borean'
     Copyright = 'Copyright (c) 2018 by Jordan Borean, Red Hat, licensed under MIT.'

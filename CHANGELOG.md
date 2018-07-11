@@ -1,5 +1,9 @@
 # Changelog for PSTestWinibalZ
 
+## v0.1.2 - 2018-07-11
+
+* Rely on role tests to do idempotency run
+
 ## v0.1.1 - 2018-07-10
 
 * Modified `Invoke-Executable` to work with the AppVeyor Runspace Host when trying to output the command stdout/stderr
